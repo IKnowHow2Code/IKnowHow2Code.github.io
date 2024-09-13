@@ -21,7 +21,7 @@
         let playerPositions = {};
         const playerColor = "red";
         
-        const ws = new WebSocket('ws://serveo.net:8765');  // Connect to WebSocket server
+        const ws = new WebSocket('wss://serveo.net:8765');  // Connect to WebSocket server
 
         ws.onopen = () => {
             console.log("Connected to WebSocket server");
