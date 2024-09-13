@@ -7,11 +7,13 @@
     <style>
         #game-canvas {
             background-color: black;
+            display: block;
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
-    <h1>Pygame Multiplayer Web Client</h1>
+    <h1 style="text-align: center;">Pygame Multiplayer Web Client</h1>
     <canvas id="game-canvas" width="640" height="480"></canvas>
     
     <script>
@@ -20,27 +22,31 @@
         
         let playerPositions = {};
         const playerColor = "red";
-        
-        const ws = new WebSocket('wss://serveo.net:8765');  // Connect to WebSocket server
+
+        // Use wss:// to make a secure WebSocket connection
+        const ws = new WebSocket('wss://serveo.net:8765');  // Secure WebSocket connection
 
         ws.onopen = () => {
             console.log("Connected to WebSocket server");
         };
 
         ws.onmessage = (event) => {
-            playerPositions = JSON.parse(event.data);
-            drawPlayers();
+            console.log("Received data:", event.data);  // Log the data received from the server
+            playerPositions = JSON.parse(event.data);   // Parse the player positions from the server
+            drawPlayers();  // Redraw the players on the canvas
         };
 
         ws.onclose = () => {
             console.log("Disconnected from WebSocket server");
         };
 
+        // Function to send player movement direction to the server
         function sendDirection(direction, steps) {
             const message = JSON.stringify({ direction: direction, steps: steps });
-            ws.send(message);
+            ws.send(message);  // Send the movement data to the server via WebSocket
         }
 
+        // Listen for arrow key presses and send the direction to the server
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowUp') sendDirection('up', 5);
             if (event.key === 'ArrowDown') sendDirection('down', 5);
@@ -48,12 +54,14 @@
             if (event.key === 'ArrowRight') sendDirection('right', 5);
         });
 
+        // Function to draw all players on the canvas
         function drawPlayers() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas before drawing
+            
             for (const player in playerPositions) {
                 const pos = playerPositions[player];
                 ctx.fillStyle = playerColor;
-                ctx.fillRect(pos[0], pos[1], 50, 50);  // Draw each player
+                ctx.fillRect(pos[0], pos[1], 50, 50);  // Draw each player as a red square
             }
         }
     </script>
