@@ -42,8 +42,13 @@
 
         // Function to send player movement direction to the server
         function sendDirection(direction, steps) {
-            const message = JSON.stringify({ direction: direction, steps: steps });
-            ws.send(message);  // Send the movement data to the server via WebSocket
+            if (ws.readyState === WebSocket.OPEN) {  // Only send if the connection is open
+                const message = JSON.stringify({ direction: direction, steps: steps });
+                ws.send(message);  // Send the movement data to the server via WebSocket
+                console.log("Sent message:", message);
+            } else {
+                console.log("WebSocket connection is not open.");
+            }
         }
 
         // Listen for arrow key presses and send the direction to the server
@@ -67,3 +72,4 @@
     </script>
 </body>
 </html>
+
